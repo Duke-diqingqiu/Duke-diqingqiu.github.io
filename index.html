@@ -2,19 +2,39 @@
 <html lang="en">
 
 <head>
+    <!-- 设置页面字符编码为UTF-8，确保全球各种字符都能正确显示 -->
     <meta charset="UTF-8">
+    <!-- 视口设置，让页面在不同设备宽度上自适应显示，初始缩放比例设为1.0 -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BMI及高血压风险计算器</title>
     <style>
+        /* 整体页面的基础样式设置 */
         body {
             font-family: Arial, sans-serif;
             text-align: center;
+            background-color: #f4f4f4;
+            padding: 20px;
         }
 
+        /* 标题样式，适当加大字号并添加一些底部间距 */
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        /* 输入框通用样式，设置内边距、外边距、宽度、边框圆角、边框样式以及过渡效果 */
         input[type="number"] {
             padding: 10px;
             margin: 10px;
             width: 200px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            transition: border-color 0.3s ease;
+        }
+
+        /* 输入框获取焦点时改变边框颜色，增强交互反馈 */
+        input[type="number"]:focus {
+            border-color: #007BFF;
         }
 
         button {
@@ -23,49 +43,71 @@
             color: white;
             border: none;
             cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
         }
 
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 结果显示段落样式，加大字号并设置字体颜色 */
         p {
             margin-top: 20px;
             font-weight: bold;
+            font-size: 18px;
+            color: #333;
         }
     </style>
 </head>
 
 <body>
+    <!-- 页面主标题 -->
     <h1>BMI及高血压风险计算器</h1>
+    <!-- 体重输入提示标签 -->
     <label for="weight">请输入体重（千克）：</label><br>
-    <input type="number" id="weight" required><br>
-    <label for="weight">请输入身高（米）：</label><br>
-    <input type="number" id="height" required><br>
+    <!-- 体重输入框，设置为必填项，并添加必要属性方便用户输入 -->
+    <input type="number" id="weight" required step="0.1" placeholder="如：60"><br>
+    <!-- 身高输入提示标签 -->
+    <label for="height">请输入身高（米）：</label><br>
+    <!-- 身高输入框，设置为必填项，同样添加属性辅助输入 -->
+    <input type="number" id="height" required step="0.01" placeholder="如：1.7"><br>
     <br>
+    <!-- 计算按钮，点击触发计算函数 -->
     <button onclick="calculateBMIAndRisk()">计算BMI及风险</button>
     <br>
+    <!-- 用于展示计算结果的区域 -->
     <p id="result"></p>
 
     <script>
         function calculateBMIAndRisk() {
+            // 获取用户输入的体重值，并转换为浮点数类型，若无法转换则为NaN
             var weight = parseFloat(document.getElementById('weight').value);
+            // 获取用户输入的身高值，并转换为浮点数类型
             var height = parseFloat(document.getElementById('height').value);
 
+            // 验证输入的合法性，若体重或身高为非数字或者身高为0，弹出提示框告知用户错误信息并终止函数执行
             if (isNaN(weight) || isNaN(height) || height === 0) {
-                document.getElementById('result').innerHTML = "请输入有效的体重和身高。";
+                alert("请输入有效的体重（千克）和身高（米）数值，身高不能为0哦！同时注意按照正确的格式输入，体重精确到0.1千克，身高精确到0.01米。");
                 return;
             }
 
+            // 根据BMI计算公式计算BMI值
             var bmi = weight / (height * height);
             var riskMessage;
 
+            // 根据不同的BMI范围设置对应的高血压风险提示信息
             if (bmi < 18.5) {
-                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险相对较低，但仍需关注整体健康状况。";
+                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险相对较低，但仍需关注整体健康状况，比如保持均衡饮食和适量运动哦。";
             } else if (bmi >= 18.5 && bmi < 24.9) {
-                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险一般处于正常水平，但保持健康的生活方式很重要。";
+                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险一般处于正常水平，不过保持健康的生活方式，像早睡早起、定期锻炼等，是很重要的呢。";
             } else if (bmi >= 24.9 && bmi < 29.9) {
-                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险有所增加。考虑通过饮食和运动等方式调整生活方式。";
+                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险有所增加啦，建议您通过合理饮食，减少高热量、高脂肪食物摄入，并且增加运动量等方式来调整生活方式哦。";
             } else {
-                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险显著升高。建议您咨询医生并及时调整生活方式。";
+                riskMessage = "您的BMI是 " + bmi.toFixed(2) + "。您患高血压的风险显著升高了呢，强烈建议您尽快咨询医生，同时积极调整生活方式，控制体重呀。";
             }
 
+            // 将生成的风险提示信息显示在页面的结果区域
             document.getElementById('result').innerHTML = riskMessage;
         }
     </script>
